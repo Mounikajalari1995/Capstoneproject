@@ -1,6 +1,23 @@
 version: 2.1
 
 jobs:
+  test:
+    docker:
+      - image: cimg/python:3.10  # Using a Python Docker image
+    steps:
+      - checkout  # Check out the code from the repository
+      - run:
+          name: Install dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - run:
+          name: Run tests
+          command: |
+            . venv/bin/activate
+            python -m unittest discover -s test
+
   build_and_push:
     docker:
       - image: cimg/python:3.10  # Using a Python Docker image
@@ -25,6 +42,9 @@ jobs:
 
 workflows:
   version: 2  # Define the version of workflows syntax
-  build_and_push_workflow:
+  test_and_build:
     jobs:
-      - build_and_push  # Run the build and push job
+      - test
+      - build_and_push:
+          requires:
+            - test  # Ensure the build_and_push job only runs if the test job passes
