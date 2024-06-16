@@ -4,11 +4,11 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir --disable-pip-version-check --no-progress --no-use-pep517 -r requirements.txt
+# Install dependencies with optimizations
+RUN pip install --no-cache-dir --disable-pip-version-check --progress-bar off -r requirements.txt
 
-
+# Copy the rest of your application code
 COPY . .
 
-EXPOSE 5000
-
-CMD ["python", "main.py"]
+# Specify the command to run your application
+CMD [ "python", "main.py" ]
