@@ -37,6 +37,21 @@ jobs:
             # Push the Docker image to Docker Hub
             docker push mounikajalari/capstoneproject:$version
 
+sonarcloud_analysis:
+    docker:
+      - image: sonarsource/sonar-scanner-cli:latest
+    steps:
+      - checkout
+      - run:
+          name: SonarCloud Analysis
+          command: |
+            sonar-scanner \
+              -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+              -Dsonar.organization=lambtoncapstoneporjectgroupf \
+              -Dsonar.sources=. \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.login=$SONAR_TOKEN
+
 workflows:
   version: 2
   build_workflow:
@@ -45,3 +60,6 @@ workflows:
       - build_and_push:
           requires:
             - test
+      - sonarcloud_analysis:
+          requires:
+            - build_and_push
