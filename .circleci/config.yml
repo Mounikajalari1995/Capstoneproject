@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: python:3.10  # Choose an appropriate Python version
+      - image: python:3.10
     steps:
       - checkout
       - run:
@@ -17,37 +17,30 @@ jobs:
 
   build_and_push:
     docker:
-      - image: docker:20.10.12  # Using Docker in Docker (DinD)
+      - image: docker:20.10.12
     steps:
-      - checkout  # Check out the code from the repository
-      - setup_remote_docker  # Set up Docker in the CircleCI environment
+      - checkout
+      - setup_remote_docker
       - run:
           name: Build and Push Docker Image
           command: |
-            # Define the Docker image version using the CircleCI build number
             version="build-$CIRCLE_BUILD_NUM"
             echo "Building Docker image with tag: $version"
-            
-            # Build the Docker image
             docker build -t mounikajalari/capstoneproject:$version .
-            
-            # Log in to Docker Hub using environment variables
             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-            
-            # Push the Docker image to Docker Hub
             docker push mounikajalari/capstoneproject:$version
 
-sonarcloud_analysis:
+  sonarcloud_analysis:
     docker:
-      - image: sonarsource/sonar-scanner-cli:latest
+      - image: sonarsource/sonar-scanner-cli
     steps:
       - checkout
       - run:
-          name: SonarCloud Analysis
+          name: SonarCloud analysis
           command: |
             sonar-scanner \
+              -Dsonar.organization=$SONAR_ORG_KEY\
               -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-              -Dsonar.organization=lambtoncapstoneporjectgroupf \
               -Dsonar.sources=. \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN
