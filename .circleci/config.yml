@@ -44,6 +44,7 @@ jobs:
               -Dsonar.sources=. \
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.login=$SONAR_TOKEN
+              -Dsonar.branch.name=master
 
 workflows:
   version: 2
