@@ -45,8 +45,9 @@ jobs:
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.token=$SONAR_TOKEN \
               -Dsonar.branch.name=main \
-              -Dsonar.python.version: "3.8" \
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+              -Dsonar.python.version="3.8" \
+              -Dsonar.python.coverage.reportPaths=coverage.xml
+               
 
 workflows:
   version: 2
