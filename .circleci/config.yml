@@ -32,22 +32,13 @@ jobs:
 
   sonarcloud_analysis:
     docker:
-      - image: circleci/python:3.10  # Using Python image as base
+      - image: sonarsource/sonar-scanner-cli
     steps:
       - checkout
       - run:
-          name: Install Java 17
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y openjdk-17-jdk
-            java -version  # Verify Java installation
-      - run:
-          name: Install SonarScanner CLI
-          command: |
-            wget -O /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-            unzip /tmp/sonar-scanner.zip -d /opt
-            export PATH=$PATH:/opt/sonar-scanner-4.6.2.2472-linux/bin
-            sonar-scanner -v  # Verify SonarScanner installation
+          name: Fetch main branch
+          command: git fetch origin main
+
       - run:
           name: SonarCloud analysis
           command: |
@@ -58,7 +49,7 @@ jobs:
               -Dsonar.host.url=https://sonarcloud.io \
               -Dsonar.token=$SONAR_TOKEN \
               -Dsonar.branch.name=main \
-              -Dsonar.python.version=3.9 \
+              -Dsonar.python.version=3.10 \
               -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
 workflows:
