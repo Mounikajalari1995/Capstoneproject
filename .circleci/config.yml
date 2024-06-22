@@ -9,7 +9,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            python -m ensurepip --upgrade
+            pip install --upgrade pip
             pip install -r requirements.txt
+            pip install pytest pytest-cov
       - run:
           name: Run unit tests
           command: |
@@ -17,10 +20,14 @@ jobs:
 
   build_and_push:
     docker:
-      - image: docker:20.10.12
+      - image: python:3.10
     steps:
       - checkout
       - setup_remote_docker
+      - run:
+          name: Install Docker CLI
+          command: |
+            apt-get update && apt-get install -y docker.io
       - run:
           name: Build and Push Docker Image
           command: |
@@ -32,21 +39,31 @@ jobs:
 
   sonarcloud_analysis:
     docker:
-      - image: sonarsource/sonar-scanner-cli
+      - image: python:3.10
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
+            python -m ensurepip --upgrade
+            pip install --upgrade pip
             pip install -r requirements.txt
+            pip install pytest pytest-cov
       - run:
           name: Run tests and generate coverage
           command: |
             pytest --cov=your_module --cov-report=xml
       - run:
+          name: Install Sonar Scanner
+          command: |
+            apt-get update && apt-get install -y wget unzip
+            wget -O /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+            unzip /tmp/sonar-scanner.zip -d /opt
+            export PATH=$PATH:/opt/sonar-scanner-4.6.2.2472-linux/bin
+      - run:
           name: SonarCloud analysis
           command: |
-            sonar-scanner \
+            /opt/sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner \
               -Dsonar.organization=$SONAR_ORG_KEY \
               -Dsonar.projectKey=$SONAR_PROJECT_KEY \
               -Dsonar.sources=. \
@@ -54,7 +71,8 @@ jobs:
               -Dsonar.token=$SONAR_TOKEN \
               -Dsonar.branch.name=main \
               -Dsonar.python.version=3.8 \
-              -Dsonar.python.coverage.reportPaths=coverage.xml
+              -Dsonar.python.coverage.reportPaths=coverage.xml \
+              -X
 
 workflows:
   version: 2
