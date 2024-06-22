@@ -39,7 +39,7 @@ jobs:
 
   sonarcloud_analysis:
     docker:
-      - image: python:3.10
+      - image: circleci/openjdk:17-jdk  # Java 17 Docker image
     steps:
       - checkout
       - run:
@@ -60,6 +60,10 @@ jobs:
             wget -O /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
             unzip /tmp/sonar-scanner.zip -d /opt
             export PATH=$PATH:/opt/sonar-scanner-4.6.2.2472-linux/bin
+      - run:
+          name: Verify SonarScanner Installation
+          command: |
+            /opt/sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner -v
       - run:
           name: SonarCloud analysis
           command: |
