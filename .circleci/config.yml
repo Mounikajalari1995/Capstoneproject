@@ -38,7 +38,6 @@ jobs:
       - run:
           name: Fetch main branch
           command: git fetch origin main
-
       - run:
           name: SonarCloud analysis
           command: |
