@@ -56,9 +56,9 @@ workflows:
   build_workflow:
     jobs:
       - test
-      - build_and_push:
-          requires:
-            - test
       - sonarcloud_analysis:
           requires:
-            - build_and_push
+            - test
+      - build_and_push:
+          requires:
+            - sonarcloud_analysis
