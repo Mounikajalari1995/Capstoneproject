@@ -66,7 +66,7 @@ jobs:
             git config --global user.email "mounikajalari2017@gmail.com"
             git config --global user.name "mounikajalari1995"
             pwd
-            cd your_manifest_repo
+            cd CapstoneManifest
             pwd
             echo $TAG
             sed -i "s/build-.*/build-$TAG/g" manifest/deployment.yaml
